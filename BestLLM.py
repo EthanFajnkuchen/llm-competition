@@ -23,7 +23,7 @@ def ask_modelGPT4All(model, question):
 
 if __name__ == '__main__':
     client_wf = wf.Client(app_id=os.getenv('APP_ID'))
-    model_llm = GPT4All('gpt4all-falcon-q4_0.gguf')
+    model_llm = GPT4All('mpt-7b-chat-merges-q4_0.gguf')
     answer_wf = ask_wolfram(client_wf, 'Who is the president of the USA?') #Need to change the prompt to get questions from the list
     answer_llm = ask_modelGPT4All(model_llm, 'Who is the president of the USA?')
     print(answer_wf)
