@@ -2,20 +2,38 @@ from gpt4all import GPT4All
 from dotenv import load_dotenv
 import wolframalpha as wf
 import os
+import csv
+import time
 
 load_dotenv()
 
+def read_csv(file_path):
+    questions = []
+    with open(file_path, newline='', encoding='utf-8') as csvfile :
+        csvreader = csv.reader(csvfile)
+        next(csvreader, None)
+        for row in csvreader:
+            if len(row) > 1:
+                questions.append(row[1])
+    return questions
 
 def ask_wolfram(client, question):
     try :
+        start_time = time.time()  # Record start time
         res = client.query(question)
-        return next(res.results).text
+        end_time = time.time()  # Record end time
+        response_time = (end_time - start_time) * 1000 
+        return next(res.results).text, response_time
     except Exception as e:
         raise e
     
 def ask_modelGPT4All(model, question):
     try :
-        return model.generate(question)
+        start_time = time.time()  # Record start time in seconds
+        response = model.generate(question)
+        end_time = time.time()  # Record end time in seconds
+        response_time = (end_time - start_time) * 1000  # Convert duration to milliseconds
+        return response, response_time    
     except Exception as e : 
         raise e
 
@@ -41,21 +59,21 @@ def check_similarity(model,question, answer1, answer2):
 
 
 if __name__ == '__main__':
+    questions = read_csv('./General_Knowledge_Questions.csv')
     client_wf = wf.Client(app_id=os.getenv('APP_ID'))
     model_llm1_questions = GPT4All("gpt4all-falcon-q4_0.gguf")
     model_llm2_questions = GPT4All('orca-2-7b.Q4_0.gguf')
     model_llm_checker = GPT4All("mistral-7b-instruct-v0.1.Q4_0.gguf")
-    answer_wf = ask_wolfram(client_wf, 'Who is the president of the USA?') #Need to change the prompt to get questions from the list
-    print(answer_wf)
-    answer_llm1 = ask_modelGPT4All(model_llm1_questions, 'Who is the president of the USA?')
-    print(answer_llm1)
-    answer_llm2 = ask_modelGPT4All(model_llm2_questions, 'Who is the president of the USA?')
-    print(answer_llm2)
+    for question in questions:
+        answer_wf, time_wf = ask_wolfram(client_wf, question)
+        answer_llm1, time_llm1 = ask_modelGPT4All(model_llm1_questions, question)
+        mesure_llm1, time_llm2 = check_similarity(model_llm_checker, question, answer_wf, answer_llm1)
+        llm1_stats = (question, model_llm1_questions.config['name'], answer_llm1, time_llm1, mesure_llm1)
+        answer_llm2 = ask_modelGPT4All(model_llm2_questions, question)
+        mesure_llm2 = check_similarity(model_llm_checker, question, answer_wf, answer_llm2)
+        llm2_stats = (question, model_llm2_questions.config['name'], answer_llm2, time_llm2, mesure_llm2)
 
-    mesure1 = check_similarity(model=model_llm_checker, question='Who is the president of the USA? ',answer1=answer_wf, answer2=answer_llm1)
-    print(mesure1)
-    mesure2 = check_similarity(model=model_llm_checker, question='Who is the president of the USA? ',answer1=answer_wf, answer2=answer_llm2)
-    print(mesure2)
+    
 
 
 
