@@ -21,11 +21,16 @@ def ask_wolfram(client, question):
     try :
         start_time = time.time()  # Record start time
         res = client.query(question)
+        if not res.results:
+            return "No results found."
         end_time = time.time()  # Record end time
         response_time = (end_time - start_time) * 1000 
         return next(res.results).text, response_time
+    except StopIteration:
+        return "No results available for this query.", 0
     except Exception as e:
-        raise e
+        return f"An error occurred: {e}", 0
+
     
 def ask_modelGPT4All(model, question):
     try :
@@ -70,13 +75,15 @@ if __name__ == '__main__':
 
     for question in questions:
         answer_wf, time_wf = ask_wolfram(client_wf, question)
+        if answer_wf == "No results available for this query." :
+            continue
         answer_llm1, time_llm1 = ask_modelGPT4All(model_llm1_questions, question)
         mesure_llm1 = check_similarity(model_llm_checker, question, answer_wf, answer_llm1)
         llm1_stats = (question, model_llm1_questions.config['name'], answer_llm1, time_llm1, mesure_llm1)
         answer_llm2, time_llm2 = ask_modelGPT4All(model_llm2_questions, question)
         mesure_llm2 = check_similarity(model_llm_checker, question, answer_wf, answer_llm2)
         llm2_stats = (question, model_llm2_questions.config['name'], answer_llm2, time_llm2, mesure_llm2)'''
-    questions = read_csv('./General_Knowledge_Questions.csv')
+    '''    questions = read_csv('./General_Knowledge_Questions.csv')
     print("Read CSV : DONE")
     client_wf = wf.Client(app_id=os.getenv('APP_ID'))
     model_llm1_questions = GPT4All("gpt4all-falcon-q4_0.gguf")
@@ -99,6 +106,37 @@ if __name__ == '__main__':
     llm2_stats = (questions[1], name_modellm2, answer_llm2, time_llm2, mesure_llm2)
     print(llm1_stats)
     print(llm2_stats)
+
+    answer_wf, time_wf = ask_wolfram(client_wf, questions[2])
+    print("Wolfram Alpha Answered!")
+    answer_llm1, time_llm1 = ask_modelGPT4All(model_llm1_questions, questions[2])
+    print("Model 1 : Answered")
+    mesure_llm1 = check_similarity(model_llm_checker, questions[2], answer_wf, answer_llm1)
+    print("Check Similiarity w/ model 1 : DONE")
+    llm1_stats = (questions[2], name_modellm1, answer_llm1, time_llm1, mesure_llm1)
+    answer_llm2, time_llm2 = ask_modelGPT4All(model_llm2_questions, questions[2])
+    print("Model 2 : Answered")
+    mesure_llm2 = check_similarity(model_llm_checker, questions[2], answer_wf, answer_llm2)
+    print("Check Similiarity w/ model 2 : DONE")
+    llm2_stats = (questions[2], name_modellm2, answer_llm2, time_llm2, mesure_llm2)
+    print(llm1_stats)
+    print(llm2_stats)'''
+    questions = read_csv('./General_Knowledge_Questions.csv')
+    client_wf = wf.Client(app_id=os.getenv('APP_ID'))
+    counter = 0
+    for question in questions:
+            wolfram_result, time_wf = ask_wolfram(client_wf, question)
+            if wolfram_result == "No results available for this query.":
+                continue
+
+            print(question + " -> " + wolfram_result)
+            counter += 1
+    print('WolframAlpha answered ' + str(counter) + " / 50 questions")
+            
+
+
+
+
 
     
 

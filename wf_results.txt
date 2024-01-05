@@ -1,0 +1,41 @@
+// BATCH 1
+
+Who was the first President of the United States? -> George Washington (from 30/04/1789 to 04/03/1797)
+What year did the Titanic sink? -> Sunday, April 14, 1912 to Monday, April 15, 1912
+In what year did the Berlin Wall fall? -> 09/11/1989
+Who discovered penicillin? -> Alexander Fleming
+What is the longest river in the world? -> Nile
+(6650 km (kilometers))
+Which is the smallest country by area? -> Vatican City
+(0.44 km^2 (square kilometers))
+Name the largest desert in the world. -> Antarctic Desert
+(1.38×10^7 km^2 (square kilometers))
+What is the capital of Australia? -> Canberra, Australian Capital Territory, Australia
+What is the national flower of Japan? -> (data not available)
+What is the chemical symbol for gold? -> Au
+How many planets are in our Solar System? -> 8
+What planet is known as the Red Planet? -> current distance from Earth | 2.409 au
+20.04 light minutes
+average distance from Earth | 1.7 au
+14.1 light minutes
+current distance from Sun | 1.475 au
+12.27 light minutes
+largest distance from Sun | 2.4922873×10^8 km
+1.66599116 au
+smallest distance from Sun | 2.06644545×10^8 km
+1.38133346 au
+orbital period | 1.8808476 a
+How many bones are in the adult human body? -> 206
+Who wrote 'Romeo and Juliet'? -> William Shakespeare
+Who painted the Mona Lisa? -> Leonardo da Vinci
+Name the author of '1984' and 'Animal Farm'. -> Nineteen Eighty-Four | George Orwell
+Animal Farm | George Orwell
+Who wrote 'Les Misérables'? -> Victor Hugo
+Who directed the movie 'Jaws'? -> Steven Spielberg
+What year did the first episode of 'Game of Thrones' air? -> Sunday, April 17, 2011
+Who won the FIFA World Cup in 2014? -> Germany
+Name the Beatles' debut album. -> Please Please Me
+(22/03/1963)
+What is the highest-grossing film of all time? -> $936.7 million (US dollars)
+(Star Wars: Episode VII - The Force Awakens)
+WolframAlpha answered 22 / 50 questions
