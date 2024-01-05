@@ -41,16 +41,21 @@ def check_similarity(model,question, answer1, answer2):
 
 
 if __name__ == '__main__':
-    #client_wf = wf.Client(app_id=os.getenv('APP_ID'))
-    #model_llm_questions = GPT4All("gpt4all-falcon-q4_0.gguf")
+    client_wf = wf.Client(app_id=os.getenv('APP_ID'))
+    model_llm1_questions = GPT4All("gpt4all-falcon-q4_0.gguf")
+    model_llm2_questions = GPT4All('orca-2-7b.Q4_0.gguf')
     model_llm_checker = GPT4All("mistral-7b-instruct-v0.1.Q4_0.gguf")
-    #answer_wf = ask_wolfram(client_wf, 'Who is the president of the USA?') #Need to change the prompt to get questions from the list
-    #print(answer_wf)
+    answer_wf = ask_wolfram(client_wf, 'Who is the president of the USA?') #Need to change the prompt to get questions from the list
+    print(answer_wf)
+    answer_llm1 = ask_modelGPT4All(model_llm1_questions, 'Who is the president of the USA?')
+    print(answer_llm1)
+    answer_llm2 = ask_modelGPT4All(model_llm2_questions, 'Who is the president of the USA?')
+    print(answer_llm2)
 
-    #answer_llm = ask_modelGPT4All(model_llm_questions, 'Who is the president of the USA?')
-    #print(answer_llm)
-    mesure = check_similarity(model=model_llm_checker, question='Who is the president of the USA? ',answer1='Joe Biden (2021-present)', answer2='The president of the USA is Donald Trump')
-    print(mesure)
+    mesure1 = check_similarity(model=model_llm_checker, question='Who is the president of the USA? ',answer1=answer_wf, answer2=answer_llm1)
+    print(mesure1)
+    mesure2 = check_similarity(model=model_llm_checker, question='Who is the president of the USA? ',answer1=answer_wf, answer2=answer_llm2)
+    print(mesure2)
 
 
 
