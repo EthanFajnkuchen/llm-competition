@@ -61,28 +61,46 @@ def check_similarity(model,question, answer1, answer2):
 
 
 if __name__ == '__main__':
+
+    #Read CSV
     questions = read_csv('./General_Knowledge_Questions.csv')
+    
+    #Open Client with Wolfram + 3 Local LLMs
     client_wf = wf.Client(app_id=os.getenv('APP_ID'))
     model_llm1_questions = GPT4All("gpt4all-falcon-q4_0.gguf")
     model_llm2_questions = GPT4All('orca-2-7b.Q4_0.gguf')
     model_llm_checker = GPT4All("mistral-7b-instruct-v0.1.Q4_0.gguf")
-    name_modellm1 = model_llm1_questions.config['name']
-    name_modellm2 = model_llm2_questions.config['name']
+
+    #Store model names
+    name_model_llm1 = model_llm1_questions.config['name']
+    name_model_llm2 = model_llm2_questions.config['name']
+
+    #Initialize list DS
     all_answers = []
 
 
     for question in questions:
+        counter = 0
         answer_wf = ask_wolfram(client_wf, question)
         if answer_wf == "No results available for this query." :
             continue
         answer_llm1, time_llm1 = ask_modelGPT4All(model_llm1_questions, question)
         mesure_llm1 = check_similarity(model_llm_checker, question, answer_wf, answer_llm1)
-        llm1_stats = (question, model_llm1_questions.config['name'], answer_llm1, time_llm1, mesure_llm1)
+        llm1_stats = (question, name_model_llm1, answer_llm1, time_llm1, mesure_llm1)
+        print(llm1_stats)
         all_answers.append(llm1_stats)
         answer_llm2, time_llm2 = ask_modelGPT4All(model_llm2_questions, question)
         mesure_llm2 = check_similarity(model_llm_checker, question, answer_wf, answer_llm2)
-        llm2_stats = (question, model_llm2_questions.config['name'], answer_llm2, time_llm2, mesure_llm2)
+        llm2_stats = (question, name_model_llm2, answer_llm2, time_llm2, mesure_llm2)
+        print(llm2_stats)
+
         all_answers.append(llm2_stats)
+        counter+= 1
+        if counter == 3:
+            break
+
+    for tpl in all_answers:
+        print(tpl)
 
 
     '''    questions = read_csv('./General_Knowledge_Questions.csv')
