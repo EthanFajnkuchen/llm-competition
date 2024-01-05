@@ -64,6 +64,10 @@ if __name__ == '__main__':
     model_llm1_questions = GPT4All("gpt4all-falcon-q4_0.gguf")
     model_llm2_questions = GPT4All('orca-2-7b.Q4_0.gguf')
     model_llm_checker = GPT4All("mistral-7b-instruct-v0.1.Q4_0.gguf")
+    name_modellm1 = model_llm1_questions.config['name']
+    name_modellm2 = model_llm2_questions.config['name']
+
+
     for question in questions:
         answer_wf, time_wf = ask_wolfram(client_wf, question)
         answer_llm1, time_llm1 = ask_modelGPT4All(model_llm1_questions, question)
