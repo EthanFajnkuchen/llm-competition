@@ -67,9 +67,9 @@ if __name__ == '__main__':
     for question in questions:
         answer_wf, time_wf = ask_wolfram(client_wf, question)
         answer_llm1, time_llm1 = ask_modelGPT4All(model_llm1_questions, question)
-        mesure_llm1, time_llm2 = check_similarity(model_llm_checker, question, answer_wf, answer_llm1)
+        mesure_llm1 = check_similarity(model_llm_checker, question, answer_wf, answer_llm1)
         llm1_stats = (question, model_llm1_questions.config['name'], answer_llm1, time_llm1, mesure_llm1)
-        answer_llm2 = ask_modelGPT4All(model_llm2_questions, question)
+        answer_llm2, time_llm2 = ask_modelGPT4All(model_llm2_questions, question)
         mesure_llm2 = check_similarity(model_llm_checker, question, answer_wf, answer_llm2)
         llm2_stats = (question, model_llm2_questions.config['name'], answer_llm2, time_llm2, mesure_llm2)'''
     questions = read_csv('./General_Knowledge_Questions.csv')
