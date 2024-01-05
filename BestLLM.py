@@ -19,17 +19,14 @@ def read_csv(file_path):
 
 def ask_wolfram(client, question):
     try :
-        start_time = time.time()  # Record start time
         res = client.query(question)
         if not res.results:
             return "No results found."
-        end_time = time.time()  # Record end time
-        response_time = (end_time - start_time) * 1000 
-        return next(res.results).text, response_time
+        return next(res.results).text
     except StopIteration:
-        return "No results available for this query.", 0
+        return "No results available for this query."
     except Exception as e:
-        return f"An error occurred: {e}", 0
+        return f"An error occurred: {e}"
 
     
 def ask_modelGPT4All(model, question):
@@ -74,7 +71,7 @@ if __name__ == '__main__':
 
 
     for question in questions:
-        answer_wf, time_wf = ask_wolfram(client_wf, question)
+        answer_wf = ask_wolfram(client_wf, question)
         if answer_wf == "No results available for this query." :
             continue
         answer_llm1, time_llm1 = ask_modelGPT4All(model_llm1_questions, question)
@@ -125,10 +122,10 @@ if __name__ == '__main__':
     client_wf = wf.Client(app_id=os.getenv('APP_ID'))
     counter = 0
     for question in questions:
-            wolfram_result, time_wf = ask_wolfram(client_wf, question)
+            wolfram_result = ask_wolfram(client_wf, question)
             if wolfram_result == "No results available for this query.":
                 continue
-
+            print(wolfram_result)
             print(question + " -> " + wolfram_result)
             counter += 1
     print('WolframAlpha answered ' + str(counter) + " / 50 questions")
