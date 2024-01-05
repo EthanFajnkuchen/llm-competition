@@ -59,7 +59,7 @@ def check_similarity(model,question, answer1, answer2):
 
 
 if __name__ == '__main__':
-    questions = read_csv('./General_Knowledge_Questions.csv')
+    '''    questions = read_csv('./General_Knowledge_Questions.csv')
     client_wf = wf.Client(app_id=os.getenv('APP_ID'))
     model_llm1_questions = GPT4All("gpt4all-falcon-q4_0.gguf")
     model_llm2_questions = GPT4All('orca-2-7b.Q4_0.gguf')
@@ -71,7 +71,28 @@ if __name__ == '__main__':
         llm1_stats = (question, model_llm1_questions.config['name'], answer_llm1, time_llm1, mesure_llm1)
         answer_llm2 = ask_modelGPT4All(model_llm2_questions, question)
         mesure_llm2 = check_similarity(model_llm_checker, question, answer_wf, answer_llm2)
-        llm2_stats = (question, model_llm2_questions.config['name'], answer_llm2, time_llm2, mesure_llm2)
+        llm2_stats = (question, model_llm2_questions.config['name'], answer_llm2, time_llm2, mesure_llm2)'''
+    questions = read_csv('./General_Knowledge_Questions.csv')
+    print("Read CSV : DONE")
+    client_wf = wf.Client(app_id=os.getenv('APP_ID'))
+    model_llm1_questions = GPT4All("gpt4all-falcon-q4_0.gguf")
+    model_llm2_questions = GPT4All('orca-2-7b.Q4_0.gguf')
+    model_llm_checker = GPT4All("mistral-7b-instruct-v0.1.Q4_0.gguf")
+    print("Create all models : DONE")
+    answer_wf, time_wf = ask_wolfram(client_wf, questions[1])
+    print("Wolfram Alpha Answered!")
+    answer_llm1, time_llm1 = ask_modelGPT4All(model_llm1_questions, questions[1])
+    print("Model 1 : Answered")
+    mesure_llm1 = check_similarity(model_llm_checker, questions[1], answer_wf, answer_llm1)
+    print("Check Similiarity w/ model 1 : DONE")
+    llm1_stats = (questions[1], model_llm1_questions.config['name'], answer_llm1, time_llm1, mesure_llm1)
+    answer_llm2, time_llm2 = ask_modelGPT4All(model_llm2_questions, questions[1])
+    print("Model 2 : Answered")
+    mesure_llm2 = check_similarity(model_llm_checker, questions[1], answer_wf, answer_llm2)
+    print("Check Similiarity w/ model 2 : DONE")
+    llm2_stats = (questions[1], model_llm2_questions.config['name'], answer_llm2, time_llm2, mesure_llm2)
+    print(llm1_stats)
+    print(llm2_stats)
 
     
 
