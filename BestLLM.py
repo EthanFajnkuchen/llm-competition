@@ -84,18 +84,21 @@ def check_similarity(model,question, answer1, answer2):
 
 if __name__ == '__main__':
 
-    '''
     #Read CSV
     questions = read_csv('./General_Knowledge_Questions.csv')
+    print('Read CSV : Done')
 
     #Open Redis Client
     redis_client = redis.Redis(host='localhost', port=6379, db=0)
+    print('Open Redis Client: Done')
     
     #Open Client with Wolfram + 3 Local LLMs
+    print('Try to open to client to the 4 LLMs')
     client_wf = wf.Client(app_id=os.getenv('APP_ID'))
     model_llm1_questions = GPT4All("gpt4all-falcon-q4_0.gguf")
     model_llm2_questions = GPT4All('orca-2-7b.Q4_0.gguf')
     model_llm_checker = GPT4All("mistral-7b-instruct-v0.1.Q4_0.gguf")
+    print('Open Client to the 4 LLMs : Done')
 
     #Store model names
     name_model_llm1 = model_llm1_questions.config['name']
@@ -105,30 +108,44 @@ if __name__ == '__main__':
     all_answers = []
 
 
+    counter = 0
     for question in questions:
-        counter = 0
-        answer_wf = ask_wolfram(client_wf, question)
+        answer_wf = ask_wolfram(redis_client, client_wf, question)
         if answer_wf == "No results available for this query." :
             continue
+        
+        print('Ask to LLM 1')
         answer_llm1, time_llm1 = ask_modelGPT4All(model_llm1_questions, question)
+        print('LLM1: DONE')
+
         mesure_llm1 = check_similarity(model_llm_checker, question, answer_wf, answer_llm1)
+        print("Check Similiarity w/ model 1 : DONE")
+
         llm1_stats = (question, name_model_llm1, answer_llm1, time_llm1, mesure_llm1)
         print(llm1_stats)
+        
         all_answers.append(llm1_stats)
+        
+        print('Ask to LLM 2')
         answer_llm2, time_llm2 = ask_modelGPT4All(model_llm2_questions, question)
+        print('LLM2: DONE')
+
         mesure_llm2 = check_similarity(model_llm_checker, question, answer_wf, answer_llm2)
+        print("Check Similiarity w/ model 2 : DONE")
+
         llm2_stats = (question, name_model_llm2, answer_llm2, time_llm2, mesure_llm2)
         print(llm2_stats)
 
         all_answers.append(llm2_stats)
-        counter+= 1
-        if counter == 3:
-            break
+        counter += 1
 
+    print("Final Answer")
     for tpl in all_answers:
         print(tpl)
 
 
+
+    '''
 
     questions = read_csv('./General_Knowledge_Questions.csv')
     print("Read CSV : DONE")
@@ -188,6 +205,7 @@ if __name__ == '__main__':
     print(llm2_stats)
 
         '''
+    '''
 
     questions = read_csv('./General_Knowledge_Questions.csv')
     redis_client = redis.Redis(host='localhost', port=6379, db=0)
@@ -201,7 +219,7 @@ if __name__ == '__main__':
             print(question + " -> " + wolfram_result)
             counter += 1
     print('WolframAlpha answered ' + str(counter) + " / 50 questions")
-            
+            '''
 
 
 
