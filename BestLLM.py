@@ -4,6 +4,7 @@ import wolframalpha as wf
 import os
 import csv
 import time
+import redis
 
 load_dotenv()
 
@@ -17,16 +18,37 @@ def read_csv(file_path):
                 questions.append(row[1])
     return questions
 
-def ask_wolfram(client, question):
+def ask_wolfram(redis_client, client_wf , question):
     try :
-        res = client.query(question)
+        #check if question already in Redis
+        cached_answer = redis_client.get(question)
+        if cached_answer:
+            print('Redis Answered')
+            return cached_answer.decode()
+        
+        #If not, ask WA
+        res = client_wf.query(question)
         if not res.results:
             return "No results found."
-        return next(res.results).text
+        
+        #Save to redis and return
+        answer = next(res.results).text
+        save_to_redis(redis_client, question, answer)
+        print('Wolfram answered')
+        return answer
     except StopIteration:
         return "No results available for this query."
     except Exception as e:
         return f"An error occurred: {e}"
+    
+
+def save_to_redis(redis_client, question, answer):
+    try :
+        redis_client.setex(question, 14400, answer)
+    except Exception as e:
+        print(f"Error saving to Redis : {e}")
+        
+
 
     
 def ask_modelGPT4All(model, question):
@@ -62,8 +84,12 @@ def check_similarity(model,question, answer1, answer2):
 
 if __name__ == '__main__':
 
+    '''
     #Read CSV
     questions = read_csv('./General_Knowledge_Questions.csv')
+
+    #Open Redis Client
+    redis_client = redis.Redis(host='localhost', port=6379, db=0)
     
     #Open Client with Wolfram + 3 Local LLMs
     client_wf = wf.Client(app_id=os.getenv('APP_ID'))
@@ -103,8 +129,15 @@ if __name__ == '__main__':
         print(tpl)
 
 
-    '''    questions = read_csv('./General_Knowledge_Questions.csv')
+
+    questions = read_csv('./General_Knowledge_Questions.csv')
     print("Read CSV : DONE")
+
+    #Open Redis Client
+    redis_client = redis.Redis(host='localhost', port=6379, db=0)
+    print('Redis Client opened : DONE')
+
+    #Open WF + 3 LLMs
     client_wf = wf.Client(app_id=os.getenv('APP_ID'))
     model_llm1_questions = GPT4All("gpt4all-falcon-q4_0.gguf")
     name_modellm1 = model_llm1_questions.config['name']
@@ -112,8 +145,11 @@ if __name__ == '__main__':
     name_modellm2 = model_llm2_questions.config['name']
     model_llm_checker = GPT4All("mistral-7b-instruct-v0.1.Q4_0.gguf")
     print("Create all models : DONE")
-    answer_wf, time_wf = ask_wolfram(client_wf, questions[1])
-    print("Wolfram Alpha Answered!")
+
+    #Ask Wolfram or check Redis
+    answer_wf = ask_wolfram(redis_client, client_wf, questions[1])
+
+    #Ask LLMs
     answer_llm1, time_llm1 = ask_modelGPT4All(model_llm1_questions, questions[1])
     print("Model 1 : Answered")
     mesure_llm1 = check_similarity(model_llm_checker, questions[1], answer_wf, answer_llm1)
@@ -124,34 +160,47 @@ if __name__ == '__main__':
     mesure_llm2 = check_similarity(model_llm_checker, questions[1], answer_wf, answer_llm2)
     print("Check Similiarity w/ model 2 : DONE")
     llm2_stats = (questions[1], name_modellm2, answer_llm2, time_llm2, mesure_llm2)
+
+    #Print Stats
     print(llm1_stats)
     print(llm2_stats)
 
-    answer_wf, time_wf = ask_wolfram(client_wf, questions[2])
-    print("Wolfram Alpha Answered!")
-    answer_llm1, time_llm1 = ask_modelGPT4All(model_llm1_questions, questions[2])
+
+    #Ask Wolfram or check Redis
+    answer_wf = ask_wolfram(redis_client, client_wf, questions[1])
+
+    #Ask LLMs
+    answer_llm1, time_llm1 = ask_modelGPT4All(model_llm1_questions, questions[1])
     print("Model 1 : Answered")
-    mesure_llm1 = check_similarity(model_llm_checker, questions[2], answer_wf, answer_llm1)
+    mesure_llm1 = check_similarity(model_llm_checker, questions[1], answer_wf, answer_llm1)
     print("Check Similiarity w/ model 1 : DONE")
-    llm1_stats = (questions[2], name_modellm1, answer_llm1, time_llm1, mesure_llm1)
-    answer_llm2, time_llm2 = ask_modelGPT4All(model_llm2_questions, questions[2])
+    llm1_stats = (questions[1], name_modellm1, answer_llm1, time_llm1, mesure_llm1)
+    answer_llm2, time_llm2 = ask_modelGPT4All(model_llm2_questions, questions[1])
     print("Model 2 : Answered")
-    mesure_llm2 = check_similarity(model_llm_checker, questions[2], answer_wf, answer_llm2)
+    mesure_llm2 = check_similarity(model_llm_checker, questions[1], answer_wf, answer_llm2)
     print("Check Similiarity w/ model 2 : DONE")
-    llm2_stats = (questions[2], name_modellm2, answer_llm2, time_llm2, mesure_llm2)
+    llm2_stats = (questions[1], name_modellm2, answer_llm2, time_llm2, mesure_llm2)
+
+
+    
+    #Print Stats
     print(llm1_stats)
     print(llm2_stats)
+
+        '''
+
     questions = read_csv('./General_Knowledge_Questions.csv')
+    redis_client = redis.Redis(host='localhost', port=6379, db=0)
+
     client_wf = wf.Client(app_id=os.getenv('APP_ID'))
     counter = 0
     for question in questions:
-            wolfram_result = ask_wolfram(client_wf, question)
+            wolfram_result = ask_wolfram(redis_client, client_wf, question)
             if wolfram_result == "No results available for this query.":
                 continue
-            print(wolfram_result)
             print(question + " -> " + wolfram_result)
             counter += 1
-    print('WolframAlpha answered ' + str(counter) + " / 50 questions")'''
+    print('WolframAlpha answered ' + str(counter) + " / 50 questions")
             
 
 
