@@ -81,8 +81,29 @@ def check_similarity(model,question, answer1, answer2):
     similarity_mesure = model.generate(prompt)
     return similarity_mesure
 
+def compute_stats(model_stats):
+    llm1_data = [item for item in model_stats if item[1] == 'GPT4ALL Falcon']
+    llm2_data = [item for item in model_stats if item[1] == 'Orca 2']
+
+    #Compute number of questions answered
+    nb_question_answered = len(model_stats) / 2
+
+    #Compute average ratings
+    avg_rating_llm1 = sum([float(item[4]) for item in llm1_data]) / len(llm1_data)
+    avg_rating_llm2 = sum([float(item[4]) for item in llm2_data]) / len(llm2_data)
+
+    #Finding lowest rating question and answer for each model
+    lowest_rating_llm1 = min(llm1_data, key=lambda x: float(x[4]))
+    lowest_rating_llm2 = min(llm2_data, key=lambda x: float(x[4]))
+
+    return nb_question_answered, avg_rating_llm1, avg_rating_llm2, lowest_rating_llm1, lowest_rating_llm2
+
+
+
+
 
 if __name__ == '__main__':
+
 
     #Read CSV
     questions = read_csv('./General_Knowledge_Questions.csv')
@@ -101,8 +122,8 @@ if __name__ == '__main__':
     print('Open Client to the 4 LLMs : Done')
 
     #Store model names
-    name_model_llm1 = model_llm1_questions.config['name']
-    name_model_llm2 = model_llm2_questions.config['name']
+    name_model_llm1 = 'GPT4ALL Falcon'
+    name_model_llm2 = 'Orca 2'
 
     #Initialize list DS
     all_answers = []
@@ -138,11 +159,18 @@ if __name__ == '__main__':
 
         all_answers.append(llm2_stats)
         counter += 1
+        if counter == 2:
+            break
 
-    print("Final Answer")
-    for tpl in all_answers:
-        print(tpl)
+    
 
+    #Compute stats and print final answers
+    nb_question_answered, avg_rating_llm1, avg_rating_llm2, lowest_rating_llm1, lowest_rating_llm2 = compute_stats(all_answers)
+    print(f'Number of questions answered : {nb_question_answered}')
+    print(f'Average rating for {name_model_llm1}: {avg_rating_llm1}')
+    print(f'Average rating for {name_model_llm2}: {avg_rating_llm2}')
+    print(f'Lowest rating question and answer of {name_model_llm1} : {lowest_rating_llm1[0]} {lowest_rating_llm1[2]}')
+    print(f'Lowest rating question and answer of {name_model_llm2} : {lowest_rating_llm2[0]} {lowest_rating_llm2[2]}')
 
 
     '''
