@@ -5,6 +5,8 @@ import os
 import csv
 import time
 import redis
+import requests
+
 
 load_dotenv()
 
@@ -18,26 +20,28 @@ def read_csv(file_path):
                 questions.append(row[1])
     return questions
 
-def ask_wolfram(redis_client, client_wf , question):
-    try :
-        #check if question already in Redis
+def ask_wolfram(redis_client, question, app_id=os.getenv('APP_ID')):
+    try:
+        # Check if question already in Redis
         cached_answer = redis_client.get(question)
         if cached_answer:
             print('Redis Answered')
             return cached_answer.decode()
-        
-        #If not, ask WA
-        res = client_wf.query(question)
-        if not res.results:
+
+        # If not, make API call to Wolfram Alpha
+        encoded_question = requests.utils.quote(question)
+        url = f"https://api.wolframalpha.com/v1/result?i={encoded_question}&appid={app_id}"
+        response = requests.get(url)
+
+        if response.status_code != 200:
             return "No results found."
-        
-        #Save to redis and return
-        answer = next(res.results).text
+
+        # Save to redis and return
+        answer = response.text
         save_to_redis(redis_client, question, answer)
         print('Wolfram answered')
         return answer
-    except StopIteration:
-        return "No results available for this query."
+
     except Exception as e:
         return f"An error occurred: {e}"
     
@@ -104,7 +108,7 @@ def compute_stats(model_stats, model_llm1_name, model_llm2_name):
 
 if __name__ == '__main__':
 
-
+    start_time = time.time()
     #Read CSV
     questions = read_csv('./General_Knowledge_Questions.csv')
     print('Read CSV : Done')
@@ -113,6 +117,7 @@ if __name__ == '__main__':
     redis_client = redis.Redis(host='localhost', port=6379, db=0)
     print('Open Redis Client: Done')
     
+    '''
     #Open Client with Wolfram + 3 Local LLMs
     print('Try to open to client to the 4 LLMs')
     client_wf = wf.Client(app_id=os.getenv('APP_ID'))
@@ -171,7 +176,7 @@ if __name__ == '__main__':
     print(f'Average rating for {name_model_llm2}: {avg_rating_llm2}')
     print(f'Lowest rating question and answer of {name_model_llm1} : {lowest_rating_llm1[0]} {lowest_rating_llm1[2]}')
     print(f'Lowest rating question and answer of {name_model_llm2} : {lowest_rating_llm2[0]} {lowest_rating_llm2[2]}')
-
+    '''
 
     '''
 
@@ -233,23 +238,41 @@ if __name__ == '__main__':
     print(llm2_stats)
 
         '''
-    '''
+
 
     questions = read_csv('./General_Knowledge_Questions.csv')
     redis_client = redis.Redis(host='localhost', port=6379, db=0)
 
-    client_wf = wf.Client(app_id=os.getenv('APP_ID'))
     counter = 0
     for question in questions:
-            wolfram_result = ask_wolfram(redis_client, client_wf, question)
-            if wolfram_result == "No results available for this query.":
+            wolfram_result = ask_wolfram(redis_client, question)
+            if wolfram_result == "No results found.":
                 continue
             print(question + " -> " + wolfram_result)
             counter += 1
     print('WolframAlpha answered ' + str(counter) + " / 50 questions")
-            '''
+    '''
+            
 
+    all_answers = []
+    client_wf = wf.Client(app_id=os.getenv('APP_ID'))
+    model_llm1_questions = GPT4All("gpt4all-falcon-q4_0.gguf")
 
+    print('connected to model')
+    
+    for question in questions:
+        print("Asking Wolfram...")
+        answer_wf = ask_wolfram(redis_client, question)
+        print(answer_wf)
+
+        if answer_wf == "No results available for this query.":
+            continue
+        answer_llm1, time_llm1 = ask_modelGPT4All(model_llm1_questions, question)
+        print(question + " -> " +  answer_llm1)
+
+    end_time = time.time()
+    print("Total Time Taken :", (end_time - start_time))
+    '''
 
 
 

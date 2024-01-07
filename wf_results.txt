@@ -1,41 +1,46 @@
-// BATCH 1
-
-Who was the first President of the United States? -> George Washington (from 30/04/1789 to 04/03/1797)
-What year did the Titanic sink? -> Sunday, April 14, 1912 to Monday, April 15, 1912
-In what year did the Berlin Wall fall? -> 09/11/1989
+Who was the first President of the United States? -> George Washington from April 30, 1789, to March 4, 1797
+Redis Answered
+What year did the Titanic sink? -> Sunday, April 14, 1912 through Monday, April 15, 1912
+Redis Answered
+In what year did the Berlin Wall fall? -> November 9, 1989
+Redis Answered
+Who was known as the 'Maid of Orleans'? -> Joan of Arc (1412 – 30 May 1431) is a patron saint of France, honored as a defender of the French nation for her role in the siege of Orléans and her insistence on the coronation of Charles VII of France during the Hundred Years' War.
+Redis Answered
 Who discovered penicillin? -> Alexander Fleming
-What is the longest river in the world? -> Nile
-(6650 km (kilometers))
-Which is the smallest country by area? -> Vatican City
-(0.44 km^2 (square kilometers))
-Name the largest desert in the world. -> Antarctic Desert
-(1.38×10^7 km^2 (square kilometers))
+Wolfram answered
+What is the longest river in the world? ->  the longest river is the Nile. The Nile River has a length of 6650 kilometers
+Wolfram answered
+Which is the smallest country by area? ->  the smallest country by total area is Vatican City. The total area of Vatican City is 0.44 square kilometers
+Wolfram answered
+Name the largest desert in the world. ->  the largest desert by area is Antarctic Desert
+Wolfram answered
 What is the capital of Australia? -> Canberra, Australian Capital Territory, Australia
-What is the national flower of Japan? -> (data not available)
+Wolfram answered
 What is the chemical symbol for gold? -> Au
+Wolfram answered
 How many planets are in our Solar System? -> 8
-What planet is known as the Red Planet? -> current distance from Earth | 2.409 au
-20.04 light minutes
-average distance from Earth | 1.7 au
-14.1 light minutes
-current distance from Sun | 1.475 au
-12.27 light minutes
-largest distance from Sun | 2.4922873×10^8 km
-1.66599116 au
-smallest distance from Sun | 2.06644545×10^8 km
-1.38133346 au
-orbital period | 1.8808476 a
+Wolfram answered
+What planet is known as the Red Planet? -> Mars is the fourth planet and the furthest terrestrial planet from the Sun. The reddish color of its surface is due to finely grained iron(III) oxide dust in the soil, giving it the nickname "the Red Planet".
+Wolfram answered
 How many bones are in the adult human body? -> 206
+Wolfram answered
 Who wrote 'Romeo and Juliet'? -> William Shakespeare
+Wolfram answered
 Who painted the Mona Lisa? -> Leonardo da Vinci
-Name the author of '1984' and 'Animal Farm'. -> Nineteen Eighty-Four | George Orwell
-Animal Farm | George Orwell
+Wolfram answered
+Name the author of '1984' and 'Animal Farm'. -> George Orwell
+Wolfram answered
 Who wrote 'Les Misérables'? -> Victor Hugo
+Wolfram answered
 Who directed the movie 'Jaws'? -> Steven Spielberg
+Wolfram answered
 What year did the first episode of 'Game of Thrones' air? -> Sunday, April 17, 2011
+Wolfram answered
 Who won the FIFA World Cup in 2014? -> Germany
-Name the Beatles' debut album. -> Please Please Me
-(22/03/1963)
-What is the highest-grossing film of all time? -> $936.7 million (US dollars)
-(Star Wars: Episode VII - The Force Awakens)
-WolframAlpha answered 22 / 50 questions
+Wolfram answered
+Name the Beatles' debut album. ->  the earliest studio album by The Beatles   is Please Please Me
+Wolfram answered
+Who is known as the 'King of Pop'? -> Michael Joseph Jackson (August 29, 1958 – June 25, 2009) was an American singer, songwriter, dancer, and philanthropist. Known as the "King of Pop", he is regarded as one of the most significant cultural figures of the 20th century.
+Wolfram answered
+What is the highest-grossing film of all time? ->  the highest grossing movie by total daily US box office receipts is Star Wars: Episode VII - The Force Awakens. The US box office gross for the 2015 movie Star Wars: Episode VII - The Force Awakens was about 936.7 million US dollars
+WolframAlpha answered 23 / 50 questions
