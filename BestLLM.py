@@ -81,9 +81,9 @@ def check_similarity(model,question, answer1, answer2):
     similarity_mesure = model.generate(prompt)
     return similarity_mesure
 
-def compute_stats(model_stats):
-    llm1_data = [item for item in model_stats if item[1] == 'GPT4ALL Falcon']
-    llm2_data = [item for item in model_stats if item[1] == 'Orca 2']
+def compute_stats(model_stats, model_llm1_name, model_llm2_name):
+    llm1_data = [item for item in model_stats if item[1] == model_llm1_name]
+    llm2_data = [item for item in model_stats if item[1] ==  model_llm2_name]
 
     #Compute number of questions answered
     nb_question_answered = len(model_stats) / 2
@@ -117,13 +117,14 @@ if __name__ == '__main__':
     print('Try to open to client to the 4 LLMs')
     client_wf = wf.Client(app_id=os.getenv('APP_ID'))
     model_llm1_questions = GPT4All("gpt4all-falcon-q4_0.gguf")
+    name_model_llm1 = model_llm1_questions.config['name']
     model_llm2_questions = GPT4All('orca-2-7b.Q4_0.gguf')
+    name_model_llm2 = model_llm1_questions.config['name']
+
     model_llm_checker = GPT4All("mistral-7b-instruct-v0.1.Q4_0.gguf")
     print('Open Client to the 4 LLMs : Done')
 
-    #Store model names
-    name_model_llm1 = 'GPT4ALL Falcon'
-    name_model_llm2 = 'Orca 2'
+
 
     #Initialize list DS
     all_answers = []
@@ -132,7 +133,7 @@ if __name__ == '__main__':
     counter = 0
     for question in questions:
         answer_wf = ask_wolfram(redis_client, client_wf, question)
-        if answer_wf == "No results available for this query." :
+        if answer_wf == "No results available for this query.":
             continue
         
         print('Ask to LLM 1')
@@ -159,13 +160,12 @@ if __name__ == '__main__':
 
         all_answers.append(llm2_stats)
         counter += 1
-        if counter == 2:
+        if counter == 1:
             break
 
     
-
     #Compute stats and print final answers
-    nb_question_answered, avg_rating_llm1, avg_rating_llm2, lowest_rating_llm1, lowest_rating_llm2 = compute_stats(all_answers)
+    nb_question_answered, avg_rating_llm1, avg_rating_llm2, lowest_rating_llm1, lowest_rating_llm2 = compute_stats(all_answers, name_model_llm1, name_model_llm2)
     print(f'Number of questions answered : {nb_question_answered}')
     print(f'Average rating for {name_model_llm1}: {avg_rating_llm1}')
     print(f'Average rating for {name_model_llm2}: {avg_rating_llm2}')
