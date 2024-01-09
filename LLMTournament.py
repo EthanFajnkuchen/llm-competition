@@ -76,24 +76,7 @@ def ask_modelGPT4All(model, question):
 
 
 
-def check_similarity(model,question, answer1, answer2):
-    """prompt = f'''
-            Assess the similarity between two responses to a specific question, quantifying their similarity on a scale from 0.0 (completely different) to 1.0 (exactly the same). The score should reflect how closely the responses align in meaning or content. For responses that are very similar but not identical, assign a score close to 1, like 0.8. For moderately similar responses, use a score around 0.5. For answer with no connection, use a score around 0 like 0.1 . IMPORTANT: Return only a floating-point number indicating the similarity score. Do not include any comments, explanations, introductions, or additional text. 
-
-            Example:
-            [Question] Who is the queen of Denmark?
-            [Response 1] Margrethe II (1972-present).
-            [Response 2] The queen of Denmark is King Charles III.
-
-            [Your Output]: 0.1"
-
-            Your task: 
-
-            [Question] {question}
-            [Response 1] {answer1}
-            [Response 2] {answer2}
-            [Your Output:] 
-            '''"""
+def check_similarity(model, answer1, answer2):
     while True:
         try:
 
@@ -165,7 +148,6 @@ def compute_stats(llm_answers, name_llm1, name_llm2):
 if __name__ == '__main__':
 
 
-    #start_time = datetime.datetime.now()  # Start time
     
     redis_client = redis.Redis(host='localhost', port=6379, db=0)
     try : 
@@ -197,14 +179,3 @@ if __name__ == '__main__':
     test_models(llm_model, llm_answers, wf_answers)
 
     compute_stats(llm_answers, llm1_name, llm2_name)
-
-    """for element in llm_answers:
-        print(element)"""
-
-    """end_time = datetime.datetime.now()  # End time
-    duration = end_time - start_time
-    hours, remainder = divmod(duration.seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
-    formatted_time = f"{hours:02}:{minutes:02}:{seconds:02}"
-    print(f"Total execution time: {formatted_time}")"""
-
