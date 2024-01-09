@@ -237,7 +237,7 @@ if __name__ == '__main__':
     print(llm1_stats)
     print(llm2_stats)
 
-        '''
+        
 
 
     questions = read_csv('./General_Knowledge_Questions.csv')
@@ -263,16 +263,14 @@ if __name__ == '__main__':
     for question in questions:
         print("Asking Wolfram...")
         answer_wf = ask_wolfram(redis_client, question)
-        print(answer_wf)
-
-        if answer_wf == "No results available for this query.":
+        if answer_wf == "No results found.":
             continue
         answer_llm1, time_llm1 = ask_modelGPT4All(model_llm1_questions, question)
         print(question + " -> " +  answer_llm1)
 
     end_time = time.time()
     print("Total Time Taken :", (end_time - start_time))
-    '''
+
 
 
 
